@@ -2,13 +2,16 @@ import { Box, Flex, Link } from '@chakra-ui/react';
 import React from 'react';
 import { useRouter} from 'next/router'
 import { useLogoutMutation, useMeQuery } from '../generated/graphql';
+import { isServer } from '../utils/isServer';
 
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = () => {
     const [{}, logout] = useLogoutMutation();
     const router = useRouter();
-    const [{data}, fetching] = useMeQuery(); //cache update for current user happens at _app with cacheExchanger
+    const [{data}, fetching] = useMeQuery({
+        pause: isServer(),
+    }); //cache update for current user (in 'data') happens at _app with cacheExchanger
         return (
             <Flex bg='tomato'p={4}>
 
