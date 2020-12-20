@@ -12,15 +12,18 @@ import {withUrqlClient} from 'next-urql';
 export const Login: React.FC<{}> = ({}) => {
     const router = useRouter(); //hook to navigate through pages
     const [{}, login] = useLoginMutation(); //hook to call the graphQL login query
+    const handleForgot = () => {
+        router.push("/forgot");
+    };
         return (
         <Wrapper variant='small'>
             <Formik 
-                initialValues={{username:"", password:""}} 
+                initialValues={{usernameOrEmail:"", password:""}} 
                 onSubmit={
-                    async (values, {setErrors}) => {
+                    async (inputValues, {setErrors}) => {
                         const response = await login({
-                            user: values.username, 
-                            pass: values.password
+                            userOrEmail: inputValues.usernameOrEmail, 
+                            pass: inputValues.password
                         });
 
                         if (response.data?.login.errors) {
@@ -37,9 +40,9 @@ export const Login: React.FC<{}> = ({}) => {
                 {({isSubmitting}) => (
                     <Form>
                         <InputField
-                            name="username"
-                            placeholder="username"
-                            label="Username"
+                            name="usernameOrEmail"
+                            placeholder="username or email"
+                            label="Username or email"
                         />
 
                         <Box mt={4}>
@@ -51,6 +54,7 @@ export const Login: React.FC<{}> = ({}) => {
                             />
                         </Box>
 
+                        <Box display={'flex'} justifyContent={'space-between'}>
                         <Button 
                             mt={4} //margin top
                             isLoading={isSubmitting} //loading animation on the button during 'await'
@@ -58,6 +62,16 @@ export const Login: React.FC<{}> = ({}) => {
                             colorScheme='teal'>
                                 Login
                         </Button>
+                        <Button 
+                            mt={4} //margin top
+                            ml={2}
+                            isLoading={isSubmitting} //loading animation on the button during 'await'
+                            type='button' 
+                            onClick={() => handleForgot()}
+                            colorScheme='red'>
+                                Forgot password?
+                        </Button>
+                        </Box>
                     </Form>
                 )}
             </Formik>
